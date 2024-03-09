@@ -34,13 +34,9 @@ router.get('/info/nuevaeps/:document/:type', async (req,res)=>{
 
 router.get('/info/sisben/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
-  var data = {}
-  try{
-    data = await getSisben(req.params.document,sisbenDocTypes[req.params.type])
-    res.status(200).json(data)
-  }catch(err){
-    res.status(500).json({err: err,sisben: false})
-  }
+  const data = await getSisben(req.params.document,sisbenDocTypes[req.params.type])
+  console.log(data)
+  res.status(200).json(data)
 })
 
 export default router
