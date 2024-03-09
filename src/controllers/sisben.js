@@ -3,12 +3,30 @@ import { DocTypes } from '../libs/constans.js';
 
 const getSisben = async (document,type) => {
   console.log("from getSisben: ", document,type)
-  const browser = await puppeteer.launch({timeout:100000});
-  const page = await browser.newPage();
+  var browser = {}
+  var page = {}
+  try {
+    var browser = await puppeteer.launch({
+      timeout:100000,
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    });
+  } catch(err) {
+    console.log(err)
+  }
   var response = {
     sisbenGrade: false,
     sisben: false
   }
+  page = await browser.newPage();
   await page.setViewport({
     width: 717,
     height: 598
