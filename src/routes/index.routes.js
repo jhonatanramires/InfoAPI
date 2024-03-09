@@ -15,10 +15,10 @@ router.get('/info/:document/:type', async (req,res)=>{
   var data = {}
   try{
     data = await getData(req.params.document,req.params.type)
+    res.status(200).json(data)
   } catch (err){
     res.status(500).json({err: err})
   }
-  res.status(200).json(data)
 })
 
 router.get('/info/nuevaeps/:document/:type', async (req,res)=>{
@@ -26,10 +26,10 @@ router.get('/info/nuevaeps/:document/:type', async (req,res)=>{
   var data = {}
   try {
     data = await getNuevaEps(req.params.document,nuevaepsDocTypes[req.params.type])
+    res.status(200).json(data)
   } catch(err) {
     res.status(500).json({err: err, nuevaeps: false})
   }
-  res.status(200).json(data)
 })
 
 router.get('/info/sisben/:document/:type', async (req,res)=>{
@@ -37,10 +37,10 @@ router.get('/info/sisben/:document/:type', async (req,res)=>{
   var data = {}
   try{
     data = await getSisben(req.params.document,sisbenDocTypes[req.params.type])
+    res.status(200).json(data)
   }catch(err){
     res.status(500).json({err: err,sisben: false})
   }
-  res.status(200).json(data)
 })
 
 export default router
