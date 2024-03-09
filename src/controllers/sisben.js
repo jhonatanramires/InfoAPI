@@ -4,10 +4,10 @@ import { DocTypes } from '../libs/constans.js';
 const getSisben = async (document,type) => {
   console.log("from getSisben: ", document,type)
   const browser = await puppeteer.launch({
+    headless: true,
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
-      "--single-process",
       "--no-zygote",
     ],
     executablePath:
@@ -25,8 +25,8 @@ const getSisben = async (document,type) => {
     width: 717,
     height: 598
   });
+  await page.goto('https://reportes.sisben.gov.co/dnp_sisbenconsulta');
   if (type !== undefined){
-    await page.goto('https://reportes.sisben.gov.co/dnp_sisbenconsulta');
     await page.click('#TipoID');
     await page.select('#TipoID', type); 
     await page.click('#documento'); 
@@ -41,7 +41,6 @@ const getSisben = async (document,type) => {
     });
   } else {
     for (const types of DocTypes) {
-      await page.goto('https://reportes.sisben.gov.co/dnp_sisbenconsulta');
       await page.click('#TipoID');
       await page.select('#TipoID', types); 
       await page.click('#documento'); 
