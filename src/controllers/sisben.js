@@ -4,10 +4,10 @@ import { DocTypes } from '../libs/constans.js';
 const getSisben = async (document,type) => {
   console.log("from getSisben: ", document,type)
   const browser = await puppeteer.launch({
-    headless: true,
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
+      "--single-process",
       "--no-zygote",
     ],
     executablePath:
@@ -32,11 +32,12 @@ const getSisben = async (document,type) => {
     await page.click('#documento'); 
     await page.type('#documento', document); 
     await page.click('#botonenvio'); 
-    response = await page.evaluate(() => {
+    response = await page.evaluate(async () => {
       try {
-        return { sisbenGrade: document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
+        return { sisbenGrade: await document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
       } catch(err) {
-        return { sisben: false }
+        console.log(err)
+        return { sisben: false, sisbenGrade: false }
       }
     });
   } else {
@@ -46,15 +47,12 @@ const getSisben = async (document,type) => {
       await page.click('#documento'); 
       await page.type('#documento', document); 
       await page.click('#botonenvio');
-      response = await page.evaluate(() => {
+      response = await page.evaluate(async () => {
         try {
-          return response = { sisbenGrade: document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
+          return { sisbenGrade: await document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
         } catch(err) {
           console.log(err)
-          return {
-            sisbenGrade: false,
-            sisben: false
-          }
+          return { sisben: false, sisbenGrade: false }
         }
       });
       if (response.sisbenGrade !== false){
