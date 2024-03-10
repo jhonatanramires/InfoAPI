@@ -32,6 +32,7 @@ const getSisben = async (document,type) => {
     await page.click('#documento'); 
     await page.type('#documento', document); 
     await page.click('#botonenvio'); 
+    await page.waitForSelector("body > div.container > main > div")
     response = await page.evaluate(async () => {
       try {
         return { sisbenGrade: await document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
@@ -47,6 +48,7 @@ const getSisben = async (document,type) => {
       await page.click('#documento'); 
       await page.type('#documento', document); 
       await page.click('#botonenvio');
+      await page.waitForSelector("body > div.container > main > div")
       response = await page.evaluate(async () => {
         try {
           return { sisbenGrade: await document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
