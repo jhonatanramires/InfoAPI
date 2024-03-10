@@ -10,22 +10,22 @@ router.get('/',(req,res)=> {
   res.send("hello world")
 })
 
-router.get('/info/:document/:type', async (req,res)=>{
+router.get('/info/:full/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   var data = {}
   try{
-    data = await getData(req.params.document,req.params.type)
+    data = await getData(req.params.document,req.params.type,req.params.full)
     res.status(200).json(data)
   } catch (err){
     res.status(500).json({err: err})
   }
 })
 
-router.get('/info/nuevaeps/:document/:type', async (req,res)=>{
+router.get('/info/:full/nuevaeps/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   var data = {}
   try {
-    data = await getNuevaEps(req.params.document,nuevaepsDocTypes[req.params.type])
+    data = await getNuevaEps(req.params.document,nuevaepsDocTypes[req.params.type],req.params.full)
     res.status(200).json(data)
   } catch(err) {
     res.status(500).json({err: err, nuevaeps: false})
