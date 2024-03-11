@@ -32,7 +32,7 @@ router.get('/info/:full/nuevaeps/:document/:type', async (req,res)=>{
   }
 })
 
-router.get('/info/sisben/:document/:type', async (req,res)=>{
+router.get('/info/:full/sisben/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   const data = await getSisben(req.params.document,sisbenDocTypes[req.params.type])
   console.log(data)

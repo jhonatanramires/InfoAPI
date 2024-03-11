@@ -1,12 +1,11 @@
 import puppeteer from 'puppeteer';
 import { DocTypes } from '../libs/constans.js';
 
-const getSisben = async (document,type) => {
+const getAdres = async (document,type) => {
   console.log("from getSisben: ", document,type)
   const browser = await puppeteer.launch({
-    headless: process.env.NODE_ENV === "production"
-    ? true
-    : false,
+    headless: false,
+    slowMo: 100,
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
@@ -28,24 +27,14 @@ const getSisben = async (document,type) => {
     width: 717,
     height: 598
   });
-  await page.setDefaultNavigationTimeout(0);
-  //Skip images/styles/fonts loading for performance
-  await page.setRequestInterception(true);
-  page.on('request', (req) => {
-      if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image'){
-          req.abort();
-      } else {
-          req.continue();
-      }
-  });
-  await page.goto('https://reportes.sisben.gov.co/dnp_sisbenconsulta');
+  await page.goto('https://aplicaciones.adres.gov.co/bdua_internet/Pages/ConsultarAfiliadoWeb.aspx');
   if (type !== undefined){
-    await page.click('#TipoID');
-    await page.select('#TipoID', type); 
-    await page.click('#documento'); 
-    await page.type('#documento', document); 
-    await page.click('#botonenvio'); 
-    await page.waitForSelector("body > div.container > main > div")
+    await page.click('#tipoDoc');
+    await page.select('#tipoDoc', type); 
+    await page.click('#txtNumDoc'); 
+    await page.type('#txtNumDoc', document); 
+    await page.click('#btnConsultar'); 
+    await page.waitForSelector("#divInfo")
     response = await page.evaluate(async () => {
       try {
         return { sisbenGrade: await document.querySelector('body > div.container > main > div > div.card.border.border-0 > div:nth-child(3) > div > div.col-md-3.imagenpuntaje.border.border-0 > div:nth-child(3) > div > p').innerText, sisben: true}
@@ -83,4 +72,6 @@ const getSisben = async (document,type) => {
   return response
 };
 
-export default getSisben
+getAdres()
+
+export default getAdres
