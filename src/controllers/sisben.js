@@ -3,14 +3,7 @@ import { DocTypes } from '../libs/constans.js';
 
 const getSisben = async (document,type) => {
   console.log("from getSisben: ", document,type)
-  console.log("from getSisben: headless es: ", process.env.NODE_ENV === "production"
-  ? true
-  : false)
   const browser = await puppeteer.launch({
-    headless: process.env.NODE_ENV === "production"
-    ? true
-    : false,
-    headless: false,
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
@@ -31,16 +24,6 @@ const getSisben = async (document,type) => {
   await page.setViewport({
     width: 717,
     height: 598
-  });
-  await page.setDefaultNavigationTimeout(0);
-  //Skip images/styles/fonts loading for performance
-  await page.setRequestInterception(true);
-  page.on('request', (req) => {
-      if(req.resourceType() == 'stylesheet' || req.resourceType() == 'font' || req.resourceType() == 'image'){
-          req.abort();
-      } else {
-          req.continue();
-      }
   });
   await page.goto('https://reportes.sisben.gov.co/dnp_sisbenconsulta');
   if (type !== undefined){
