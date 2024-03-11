@@ -3,6 +3,9 @@ import { DocTypes } from '../libs/constans.js';
 
 const getSisben = async (document,type) => {
   console.log("from getSisben: ", document,type)
+  console.log("from getSisben: headless es: ", process.env.NODE_ENV === "production"
+  ? true
+  : false)
   const browser = await puppeteer.launch({
     headless: process.env.NODE_ENV === "production"
     ? true
