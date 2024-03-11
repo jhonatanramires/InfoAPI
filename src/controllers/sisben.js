@@ -7,6 +7,7 @@ const getSisben = async (document,type) => {
     headless: process.env.NODE_ENV === "production"
     ? true
     : false,
+    headless: false,
     args: [
       "--disable-setuid-sandbox",
       "--no-sandbox",
