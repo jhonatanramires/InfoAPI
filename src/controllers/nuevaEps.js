@@ -35,7 +35,7 @@ const getNuevaEps = async (document,type,full) => {
     }
   } catch (err) {
     console.log("from getNuevaEps: ",err)
-    return { nuevaeps: false }
+    return { portalNuevaeps: { nuevaeps: false } }
   }
   
 }
