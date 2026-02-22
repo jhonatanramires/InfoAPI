@@ -4,7 +4,7 @@ import { DocTypes } from '../libs/constans.js';
 const getSisben = async (document, type) => {
   console.log("from getSisben: ", document, type);
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--disable-setuid-sandbox", "--no-sandbox", "--single-process", "--no-zygote"],
     executablePath: process.env.NODE_ENV === "production"
       ? process.env.PUPPETEER_EXECUTABLE_PATH
