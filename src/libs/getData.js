@@ -8,5 +8,9 @@ export const getData = async (document,type,full) => {
   const nuevaepsData = await getNuevaEps(document,nuevaepsDocTypes[type],full)
   console.log(nuevaepsData)
   const sisbenData = await getSisben(document,sisbenDocTypes[type])
-  return {...sisbenData,...nuevaepsData}
+  if (full == 1){
+    return {...sisbenData,...nuevaepsData}
+  } else {
+    return {...(sisbenData.categoria),...nuevaepsData}
+  }
 }

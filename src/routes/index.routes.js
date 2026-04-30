@@ -10,7 +10,7 @@ router.get('/',(req,res)=> {
   res.send("hello world")
 })
 
-router.get('/info/:full/:document/:type', async (req,res)=>{
+router.get('/:full/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   var data = {}
   try{
@@ -21,7 +21,7 @@ router.get('/info/:full/:document/:type', async (req,res)=>{
   }
 })
 
-router.get('/info/:full/nuevaeps/:document/:type', async (req,res)=>{
+router.get('/:full/nuevaeps/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   var data = {}
   try {
@@ -32,11 +32,15 @@ router.get('/info/:full/nuevaeps/:document/:type', async (req,res)=>{
   }
 })
 
-router.get('/info/sisben/:full/:document/:type', async (req,res)=>{
+router.get('/:full/sisben/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   const data = await getSisben(req.params.document,sisbenDocTypes[req.params.type])
   console.log(data)
-  res.status(200).json(data)
+  if (req.params.full == 1){
+    res.status(200).json(data)
+  } else {
+    res.status(200).json(data.categoria)
+  }
 })
 
 export default router

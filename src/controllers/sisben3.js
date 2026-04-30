@@ -84,7 +84,7 @@ function extraerDatosSisben(html) {
         fechaConsulta,
         ficha,
         categoria: {
-            letra: categoria,
+            sisbenGrade: categoria,
             descripcion: descripcionCategoria
         },
         datosPersonales: {
