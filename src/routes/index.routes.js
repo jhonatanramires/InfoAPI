@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { getData } from "../libs/getData.js"
 import getNuevaEps from "../controllers/nuevaEps.js"
-import getSisben from "../controllers/sisben.js"
+import getSisben from "../controllers/sisben3.js"
 import { nuevaepsDocTypes, sisbenDocTypes } from "../libs/constans.js" 
 
 const router = Router()
