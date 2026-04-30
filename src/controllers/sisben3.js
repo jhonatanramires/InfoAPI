@@ -203,3 +203,5 @@ const getSisben = async (document,type)=>{
 
     return datos
 }
+
+export default getSisben;
