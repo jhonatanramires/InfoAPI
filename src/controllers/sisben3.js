@@ -11,33 +11,58 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function ejemplo() {
   console.log('Esperando...');
-  await delay(10);
+  await delay(5);
   console.log('Listo después de 5 segundos');
 }
 
 function extraerDatosSisben(html) {
     const $ = cheerio.load(html);
 
-    // 1. Token CSRF (del formulario)
-    const token = $('input[name="__RequestVerificationToken"]').val();
+    // 1. COMPROBACIÓN DE "NO ENCONTRADO"
+    // Buscamos si existe la imagen de error o si el texto del script contiene el mensaje de no existencia
+    const scriptText = $('script').text();
+    const imagenError = $('img[src*="mensaje 2-0.png"]').length > 0;
+    const noExisteEnBase = scriptText.includes('NO" se encuentra en la base del Sisbén IV') || imagenError;
 
-    // 2. Datos del formulario de búsqueda (valores por defecto o seleccionados)
-    const tipoDocumentoSeleccionado = $('#TipoID option:selected').text().trim();
-    const tipoDocumentoValor = $('#TipoID').val();
-    const numeroDocumento = $('#documento').val();
+    if (noExisteEnBase) {
+        return {
+            estadoRegistro: "No se encuentra en la base del Sisbén IV",
+            fechaConsulta: "N/A",
+            ficha: "N/A",
+            categoria: {
+                sisbenGrade: "Sin Categoría",
+                descripcion: "El ciudadano no registra encuesta vigente"
+            },
+            datosPersonales: {
+                nombres: "No encontrado",
+                apellidos: "No encontrado",
+                tipoDocumento: $('#TipoID option:selected').text().trim() || "N/A",
+                numeroDocumento: $('#documento').val() || "N/A",
+                municipio: "N/A",
+                departamento: "N/A"
+            },
+            informacionAdministrativa: {
+                encuestaVigente: "No",
+                ultimaActualizacionCiudadano: "N/A",
+                ultimaActualizacionRegistros: "N/A"
+            }
+        };
+    }
 
-    // 3. Estado del registro (válido/no válido)
-    const registroValido = $('.valido').text().trim(); // "Registro válido"
+    // 2. LÓGICA ORIGINAL (Si el ciudadano SI existe)
+    
+    // Estado del registro
+    const registroValido = $('.valido').text().trim();
 
-    // 4. Información principal de la tarjeta
+    // Información principal
     const fechaConsulta = $('.etiqueta:contains("Fecha de consulta:")').next('.campo1').text().trim();
     const ficha = $('.etiqueta:contains("Ficha:")').next('.campo1').text().trim();
 
-    // 5. Categoría y descripción (dentro del div con clase "imagenpuntaje")
+    // Categoría y descripción
     const categoria = $('.imagenpuntaje .font-weight-bold[style*="font-size:42px"]').text().trim();
     const descripcionCategoria = $('.imagenpuntaje .text-center.font-weight-bold[style*="font-size:18px"]').text().trim();
 
-    // 6. Datos personales (dentro del bloque "DATOS PERSONALES")
+    // Datos personales
     const nombres = $('.etiqueta1:contains("Nombres:")').closest('.row').find('.campo1').text().trim().replace(/\s+/g, ' ');
     const apellidos = $('.etiqueta1:contains("Apellidos:")').closest('.row').find('.campo1').text().trim().replace(/\s+/g, ' ');
     const tipoDocumentoTexto = $('.etiqueta1:contains("Tipo de documento:")').closest('.row').find('.campo1').text().trim();
@@ -45,42 +70,13 @@ function extraerDatosSisben(html) {
     const municipio = $('.etiqueta1:contains("Municipio:")').closest('.row').find('.campo1').text().trim();
     const departamento = $('.etiqueta1:contains("Departamento:")').closest('.row').find('.campo1').text().trim();
 
-    // 7. Información administrativa
+    // Información administrativa
     const encuestaVigente = $('.etiqueta:contains("Encuesta vigente:")').next('.campo1').text().trim();
     const ultimaActualizacionCiudadano = $('.etiqueta:contains("Última actualización ciudadano:")').next('.campo1').text().trim();
     const ultimaActualizacionRegistros = $('.etiqueta:contains("Última actualización via registros administrativos:")').next('.campo1').text().trim();
 
-    // 8. Contacto oficina Sisbén
-    const nombreAdministrador = $('.etiqueta:contains("Nombre administrador:")').next('.font-weight-bold').text().trim();
-    const direccion = $('.etiqueta:contains("Dirección:")').next('.font-weight-bold').text().trim();
-    const telefono = $('.etiqueta:contains("Teléfono:")').next('.font-weight-bold').text().trim();
-    const correo = $('.etiqueta:contains("Correo Electrónico:")').next('.font-weight-bold').text().trim();
-
-    // 9. Nota de actualización (texto completo del alert)
-    const notaActualizacion = $('.alert-warning').text().trim().replace(/\s+/g, ' ');
-
-    // 10. Entidades que actualizan la información (lista)
-    const entidades = [];
-    $('.alert-warning .row .col-md-6 p').each((i, el) => {
-        const texto = $(el).html();
-        if (texto) {
-            const items = texto.split('<br>').map(line => line.replace('•', '').trim()).filter(l => l);
-            entidades.push(...items);
-        }
-    });
-
-    // 11. Footer y otros textos opcionales
-    const footerTexto = $('footer .container').text().trim();
-
-    // Retornar objeto estructurado
     return {
-        token,
-        formularioBusqueda: {
-            tipoDocumento: tipoDocumentoTexto || tipoDocumentoSeleccionado,
-            tipoDocumentoValor: tipoDocumentoValor,
-            numeroDocumento: numeroDocumento
-        },
-        estadoRegistro: registroValido,
+        estadoRegistro: registroValido || "Registro encontrado",
         fechaConsulta,
         ficha,
         categoria: {
@@ -99,16 +95,7 @@ function extraerDatosSisben(html) {
             encuestaVigente,
             ultimaActualizacionCiudadano,
             ultimaActualizacionRegistros
-        },
-        contactoOficina: {
-            nombreAdministrador,
-            direccion,
-            telefono,
-            correo
-        },
-        notaActualizacion,
-        entidadesActualizacion: entidades,
-        footer: footerTexto
+        }
     };
 }
 
@@ -161,10 +148,8 @@ const getSisben = async (document,type)=>{
     const url = "https://reportes.sisben.gov.co/dnp_sisbenconsulta"
     const { token, cookie } = await fetchPageAndGetToken(url);
 
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    const tipo = 3
-    const documento = 1007206741
+    const tipo = type
+    const documento = document
 
     await ejemplo()
 
@@ -195,11 +180,7 @@ const getSisben = async (document,type)=>{
     const response = await postRes2.text()
     // Ejemplo de uso:
     const datos = extraerDatosSisben(response);
-    console.log(JSON.stringify(datos, null, 2));
-
-
-    console.log(body)
-    console.log("from getSisben: ", datos)
+    console.log("from getSisben: ",JSON.stringify(datos, null, 2));
 
     return datos
 }
