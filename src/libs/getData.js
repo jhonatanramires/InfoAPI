@@ -1,4 +1,4 @@
-import getSisben from '../controllers/sisben.js'
+import getSisben from '../controllers/sisben3.js'
 import getNuevaEps from '../controllers/nuevaEps.js'
 
 import { sisbenDocTypes } from './constans.js'
