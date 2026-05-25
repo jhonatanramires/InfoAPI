@@ -1,3 +1,5 @@
+export const PORT = 3000
+
 export const sisbenDocTypes = {
   "RC": "1",
   "TI": "2",
@@ -27,3 +29,6 @@ export const nuevaepsDocTypes = {
 }
 
 export const DocTypes = ["3", "9", "1", "2", "4", "7", "8"]
+
+// SISBEN SCRAPPING CONSTANTS
+export const SISBEN_URL = "https://reportes.sisben.gov.co/dnp_sisbenconsulta"
