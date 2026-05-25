@@ -4,6 +4,57 @@ Welcome to the Sisben and Nueva EPS Data Fetcher API. This service allows you to
 
 ---
 
+## Microsoft Excel Macro and Ready-to-Use File
+
+This Excel workbook is already configured to process and transform raw data downloaded from the portal.  
+Inside the `macros` directory, there are three VBA macros that work together to automate the workflow:
+
+### Available macros
+
+- **`FormatoTabla.bas`**  
+  Applies the required structure and formatting to the raw Excel data downloaded from the portal, adapting it to the format used in the personalized workbook.
+
+- **`Módulo1.bas`**  
+  Reads the `documento` and `tipo_documento` values from a column in the spreadsheet and writes the corresponding results into other columns, such as:
+  - `sisben`
+  - `sisben_description`
+  - `nuevaeps_state`
+
+- **`JsonConverter.bas`**  
+  A helper module used by `Módulo1.bas` to handle JSON data.  
+  **Important:** this module requires enabling **Microsoft Scripting Runtime** in VBA references for it to work correctly.
+
+  *A tutorial for enabling this dependency should be added in the future.*
+
+---
+
+## How to use the Excel file
+
+1. **Download the Excel file**  
+   Open the ready-to-use workbook provided for the process.
+
+2. **Load the raw data**  
+   Paste the CSV data into the `RAWDATA` sheet.
+
+3. **Apply the table format**  
+   Run the `FormatoTabla` macro to convert the raw data into the required structure.
+
+4. **Filter the raw data before transferring it**  
+   Before moving anything to the other sheet, apply the necessary filters in the `RAWDATA` sheet.  
+   Only transfer the records that you actually need.
+
+5. **Move the selected data to the other sheet**  
+   Copy and paste only the filtered data into the destination sheet.  
+   Use `Ctrl + Shift + V` to paste it into the other sheet.
+
+6. **Run the main processing macro**  
+   Execute the `Módulo1` / `JsonAPI` module after enabling **Microsoft Scripting Runtime**.
+
+7. **Done**  
+   The workbook will automatically populate the corresponding fields and complete the process.
+
+---
+
 ## 🚀 Endpoints Overview
 
 | Method | Endpoint | Description |
