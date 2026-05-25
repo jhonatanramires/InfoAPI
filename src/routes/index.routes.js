@@ -25,7 +25,7 @@ router.get('/:full/nuevaeps/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
   var data = {}
   try {
-    data = await getNuevaEps(req.params.document,nuevaepsDocTypes[req.params.type],req.params.full)
+    data = await getNuevaEps(req.params.document,req.params.type,req.params.full)
     res.status(200).json(data)
   } catch(err) {
     res.status(500).json({err: err, nuevaeps: false})

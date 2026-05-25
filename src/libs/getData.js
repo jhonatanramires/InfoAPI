@@ -5,7 +5,7 @@ import { sisbenDocTypes } from './constans.js'
 import { nuevaepsDocTypes } from './constans.js'
 
 export const getData = async (document,type,full) => {
-  const nuevaepsData = await getNuevaEps(document,nuevaepsDocTypes[type],full)
+  const nuevaepsData = await getNuevaEps(document,type,full)
   console.log(nuevaepsData)
   const sisbenData = await getSisben(document,type)
   if (full == 1){
