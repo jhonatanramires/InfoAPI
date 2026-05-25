@@ -43,14 +43,111 @@ To ensure compatibility across **both** Sisben and Nueva EPS, please use one of 
 
 ---
 
-## 📦 Response Data *(Coming Soon)*
+## 📦 Response Data
 
-Documentation for the exact JSON structures returned by the API is currently being updated. 
+Below are the exact JSON structures returned by the API depending on the endpoint and the `full` parameter. 
 
 ### Sisben Data
-* **Using `full`:** *Coming soon*
-* **Not using `full`:** *Coming soon*
+
+#### Using `full=true`
+
+**When a record is found:**
+```json
+{
+  "estadoRegistro": "Registro válido",
+  "fechaConsulta": "YYYY-MM-DD",
+  "ficha": "1234567890",
+  "categoria": {
+    "sisbenGrade": "C4",
+    "descripcion": "Vulnerable"
+  },
+  "datosPersonales": {
+    "nombres": "Sample Names",
+    "apellidos": "Sample Lastnames",
+    "tipoDocumento": "Cédula de Ciudadanía",
+    "numeroDocumento": "123456789",
+    "municipio": "Sample Municipality",
+    "departamento": "Sample Department"
+  },
+  "informacionAdministrativa": {
+    "encuestaVigente": "YYYY-MM-DD",
+    "ultimaActualizacionCiudadano": "MM/DD/YYYY",
+    "ultimaActualizacionRegistros": "YYYY-MM-DD"
+  }
+}
+```
+
+**When no record is found:**
+```json
+{
+  "estadoRegistro": "No se encuentra en la base del Sisbén IV",
+  "fechaConsulta": "N/A",
+  "ficha": "N/A",
+  "categoria": {
+    "sisbenGrade": "Sin Categoría",
+    "descripcion": "El ciudadano no registra encuesta vigente"
+  },
+  "datosPersonales": {
+    "nombres": "No encontrado",
+    "apellidos": "No encontrado",
+    "tipoDocumento": "Cédula de Ciudadanía",
+    "numeroDocumento": "10072067412",
+    "municipio": "N/A",
+    "departamento": "N/A"
+  },
+  "informacionAdministrativa": {
+    "encuestaVigente": "No",
+    "ultimaActualizacionCiudadano": "N/A",
+    "ultimaActualizacionRegistros": "N/A"
+  }
+}
+```
+
+#### Using `full=false`
+
+**When a record is found:**
+```json
+{
+  "sisbenGrade": "C4",
+  "descripcion": "Vulnerable"
+}
+```
+
+**When no record is found:**
+```json
+{
+  "sisbenGrade": "Sin Categoría",
+  "descripcion": "El ciudadano no registra encuesta vigente"
+}
+```
+
+---
 
 ### Nueva EPS Data
-* **Using `full`:** *Coming soon*
-* **Not using `full`:** *Coming soon*
+
+#### Using `full=true`
+
+> **Note:** Currently, using the `full=true` parameter for Nueva EPS returns the exact same structure as `full=false` due to a known bug. This will be updated in a future release.
+
+#### Using `full=false`
+
+**When a record is found:**
+```json
+{
+  "portalNuevaeps": {
+    "estadoAfiDescripcion": "Activo",
+    "tipoCotizanteDescp": "Cotizante",
+    "nombreEPS": "NUEVA EPS",
+    "nuevaeps": true
+  }
+}
+```
+
+**When no record is found:**
+```json
+{
+  "portalNuevaeps": {
+    "nuevaeps": false
+  }
+}
+```
