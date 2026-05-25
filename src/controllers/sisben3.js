@@ -1,19 +1,10 @@
 // 1. First, import cheerio. Using the ESM syntax is the modern standard.
 import * as cheerio from 'cheerio';
+import { sisbenDocTypes, SISBEN_URL } from "../libs/constans.js" 
+import { genDelay } from '../libs/utils.js';
+import { logger } from '../libs/logs.js';
 
-/**
- * Extrae toda la información relevante del HTML de consulta del Sisbén IV
- * @param {string} html - El HTML de la página de resultados
- * @returns {object} - Objeto con los datos estructurados
- */
-
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-async function ejemplo() {
-  console.log('Esperando...');
-  await delay(5);
-  console.log('Listo después de 5 segundos');
-}
+logger.debug(`SISBEN_URL: ${SISBEN_URL}`)
 
 function extraerDatosSisben(html) {
     const $ = cheerio.load(html);
@@ -99,12 +90,13 @@ function extraerDatosSisben(html) {
     };
 }
 
-async function fetchPageAndGetToken(url) {
+async function getTokenCookie() {
     try {
         // 2. Perform the network request.
         //    Note: The 'cookie' header is NOT automatically set on subsequent requests.
         //    You'll need to manually store and forward cookie values if needed.
-        const getRes = await fetch(url);
+        const getRes = await fetch(SISBEN_URL);
+        logger.debug("fetch",getRes)
         if (!getRes.ok) {
             throw new Error(`GET falló con status ${getRes.status}`);
         }
@@ -112,7 +104,7 @@ async function fetchPageAndGetToken(url) {
         // 3. Extract and store cookie from the response headers.
         const setCookie = getRes.headers.get('set-cookie');
         const cookieValue = setCookie ? setCookie.split(';')[0] : null;
-        console.log('Cookie obtenida:', cookieValue);
+        logger.debug('Cookie obtenida:', cookieValue);
 
         // 4. Get the raw HTML content.
         const html = await getRes.text();
@@ -132,7 +124,7 @@ async function fetchPageAndGetToken(url) {
             throw new Error(`No se encontró el token con el selector: ${tokenSelector}`);
         }
         
-        console.log('Token CSRF obtenido:', token);
+        logger.debug('Token CSRF obtenido:', token);
         
         // 8. Return the results or use them for further processing.
         return { token, cookie: cookieValue };
@@ -144,18 +136,19 @@ async function fetchPageAndGetToken(url) {
 }
 
 const getSisben = async (document,type)=>{
-    console.log("from getSisben: ", document,type)
-    const url = "https://reportes.sisben.gov.co/dnp_sisbenconsulta"
-    const { token, cookie } = await fetchPageAndGetToken(url);
+    logger.info(`documento recibido: ${document}, tipo recibido: ${type}`)
 
-    const tipo = type
+    const { token, cookie } = await getTokenCookie();
+
+    const tipo = sisbenDocTypes[type]
+    logger.info(`tipo procesado: ${tipo}`)
     const documento = document
 
-    await ejemplo()
+    await genDelay()
 
     const body = `------WebKitFormBoundaryy7hX9d7B9BFpcyqc\r\nContent-Disposition: form-data; name=\"TipoID\"\r\n\r\n${tipo}\r\n------WebKitFormBoundaryy7hX9d7B9BFpcyqc\r\nContent-Disposition: form-data; name=\"documento\"\r\n\r\n${documento}\r\n------WebKitFormBoundaryy7hX9d7B9BFpcyqc\r\nContent-Disposition: form-data; name=\"__RequestVerificationToken\"\r\n\r\n${token}\r\n------WebKitFormBoundaryy7hX9d7B9BFpcyqc--\r\n`
 
-    const postRes2 = await fetch(url, {
+    const postRes2 = await fetch(SISBEN_URL, {
         "headers": {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
             "accept-language": "es-419,es;q=0.9",
@@ -176,11 +169,11 @@ const getSisben = async (document,type)=>{
         "method": "POST"
         });
 
-    console.log(postRes2.status);
+    logger.info(`status del fetch: ${postRes2.status}`);
     const response = await postRes2.text()
-    // Ejemplo de uso:
+    logger.debug(postRes2)
     const datos = extraerDatosSisben(response);
-    console.log("from getSisben: ",JSON.stringify(datos, null, 2));
+    logger.info(`${JSON.stringify(datos, null, 2)}`);
 
     return datos
 }
