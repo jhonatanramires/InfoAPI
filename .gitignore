@@ -5,6 +5,3 @@ pnpm-lock.yaml
 package-lock.json
 pnpm-lock.yaml
 try*.js
-
-git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
