@@ -34,7 +34,7 @@ router.get('/:full/nuevaeps/:document/:type', async (req,res)=>{
 
 router.get('/:full/sisben/:document/:type', async (req,res)=>{
   console.log("from IndexRoutes: ",req.params)
-  const data = await getSisben(req.params.document,sisbenDocTypes[req.params.type])
+  const data = await getSisben(req.params.document,req.params.type)
   console.log(data)
   if (req.params.full == 1){
     res.status(200).json(data)
