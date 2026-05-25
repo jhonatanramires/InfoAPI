@@ -65,7 +65,7 @@ Below are the exact JSON structures returned by the API depending on the endpoin
     "nombres": "Sample Names",
     "apellidos": "Sample Lastnames",
     "tipoDocumento": "Cédula de Ciudadanía",
-    "numeroDocumento": "123456789",
+    "numeroDocumento": "numero ejemplo",
     "municipio": "Sample Municipality",
     "departamento": "Sample Department"
   },
@@ -91,7 +91,7 @@ Below are the exact JSON structures returned by the API depending on the endpoin
     "nombres": "No encontrado",
     "apellidos": "No encontrado",
     "tipoDocumento": "Cédula de Ciudadanía",
-    "numeroDocumento": "10072067412",
+    "numeroDocumento": "numero ejemplo",
     "municipio": "N/A",
     "departamento": "N/A"
   },
@@ -135,10 +135,10 @@ Below are the exact JSON structures returned by the API depending on the endpoin
 ```json
 {
   "portalNuevaeps": {
-    "estadoAfiDescripcion": "Activo",
-    "tipoCotizanteDescp": "Cotizante",
-    "nombreEPS": "NUEVA EPS",
-    "nuevaeps": true
+    "estadoAfiDescripcion": "descripcion",
+    "tipoCotizanteDescp": "tipo",
+    "nombreEPS": "eps",
+    "nuevaeps": true 
   }
 }
 ```
