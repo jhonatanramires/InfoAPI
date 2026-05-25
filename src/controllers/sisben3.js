@@ -136,13 +136,13 @@ async function getTokenCookie() {
 }
 
 const getSisben = async (document,type)=>{
-    logger.info(`documento recibido: ${document}, tipo recibido: ${type}`)
-
+    
     const { token, cookie } = await getTokenCookie();
-
+    
     const tipo = sisbenDocTypes[type]
-    logger.info(`tipo procesado: ${tipo}`)
     const documento = document
+    
+    logger.info(`documento recibido: ${document}, tipo recibido: ${type}, tipo procesado: ${tipo}`)
 
     await genDelay()
 
